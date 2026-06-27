@@ -3,6 +3,8 @@ package com.minimarket.minimarket.controller;
 import com.minimarket.minimarket.entity.Venta;
 import com.minimarket.minimarket.service.VentaService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +30,7 @@ public class VentaController {
     }
 
     @PostMapping
-    public Venta guardarVenta(@RequestBody Venta venta) {
+    public Venta guardarVenta(@Valid @RequestBody Venta venta) {
         return ventaService.save(venta);
     }
 
