@@ -242,6 +242,35 @@ public class InventarioControllerTest {
     }
 
 
+    // Prueba que valida que el endpoint [POST /api/inventario] retorne Bad Request si el usuario adjunta
+    // un Inventario no valido (que no cumple con las restricciones de datos implementadas en la clase
+    // Inventario) en el body de la solicitud. Espera como respuesta un status Bad Request
+    @Test
+    @WithMockUser(authorities = {"CAJERO"})
+    public void guardarInventarioNoValidoLanzaErrorTest() throws Exception{
+        inventario.setTipoMovimiento("Movimiento no valido"); // Se asigna un tipo de movimiento no permitido
+
+        mockMvc.perform(post("/api/inventario")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(inventario)))
+            .andExpect(status().isBadRequest()); // Se espera un status Bad Request
+
+    }
+
+    // Prueba que valida que el endpoint [PUT /api/inventario] retorne Bad Request si el usuario adjunta
+    // un Inventario no valido (que no cumple con las restricciones de datos implementadas en la clase
+    // Inventario) en el body de la solicitud. Espera como respuesta un status Bad Request
+    @Test
+    @WithMockUser(authorities = {"CAJERO"})
+    public void modificarInventarioNoValidoLanzaErrorTest() throws Exception{
+        inventario.setCantidad(-2); // Se asigna una cantidad negativa (que no esta permitido)
+
+        mockMvc.perform(put("/api/inventario/{id}", Long.valueOf(1))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(producto)))
+            .andExpect(status().isBadRequest()); // Se espera un status Bad Request
+
+    }
 
 
 }

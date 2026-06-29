@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -224,6 +226,38 @@ public class ProductoControllerTest {
     public void usuarioNoAutorizadoNoPuedeEliminarProductoTest() throws Exception{
         mockMvc.perform(delete("/api/productos/{id}", Long.valueOf(1))) // Llama al endpoint [DELETE /api/productos/1]
             .andExpect(status().isForbidden()); // Espera un status Forbidden
+    }
+
+    // Prueba que valida que el endpoint [POST /api/productos] retorne Bad Request si el usuario adjunta
+    // un Producto no valido (que no cumple con las restricciones de datos implementadas en la clase
+    // Producto) en el body de la solicitud. Espera como respuesta un status Bad Request
+    // Se valida el correcto funcionamiento de la anotacion @Valid
+    @Test
+    @WithMockUser(authorities = {"ADMIN"})
+    public void guardarProductoNoValidoLanzaErrorTest() throws Exception{
+        producto.setPrecio(-1.0); // Se asigna un numero negativo al precio (que no esta permitido)
+
+        mockMvc.perform(post("/api/productos")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(producto)))
+            .andExpect(status().isBadRequest()); // Se espera un status Bad Request
+
+    }
+
+    // Prueba que valida que el endpoint [PUT /api/productos] retorne Bad Request si el usuario adjunta
+    // un Producto no valido (que no cumple con las restricciones de datos implementadas en la clase
+    // Producto) en el body de la solicitud. Espera como respuesta un status Bad Request
+    // Se valida el correcto funcionamiento de la anotacion @Valid
+    @Test
+    @WithMockUser(authorities = {"ADMIN"})
+    public void modificarProductoNoValidoLanzaErrorTest() throws Exception{
+        producto.setNombre(""); // Se asigna un nombre en blanco al precio (que no esta permitido)
+
+        mockMvc.perform(put("/api/productos/{id}", Long.valueOf(1))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(producto)))
+            .andExpect(status().isBadRequest()); // Se espera un status Bad Request
+
     }
 
 }

@@ -1,6 +1,9 @@
 package com.minimarket.minimarket.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -14,16 +17,22 @@ public class Inventario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Debe ingresar un producto")
     @ManyToOne
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
+    @NotNull(message = "Debe introducir la cantidad")
+    @Positive(message = "La cantidad debe ser un numero positivo")
     @Column(nullable = false)
     private Integer cantidad;
 
+    @NotNull(message = "Debe introducir el tipo de movimiento")
+    @Pattern(regexp = "Entrada|Salida")
     @Column(nullable = false)
     private String tipoMovimiento; // Ejemplo: "Entrada" o "Salida"
 
+    @NotNull(message = "Debe introducir una fecha")
     @Column(nullable = false)
     private Date fechaMovimiento;
 

@@ -2,6 +2,9 @@ package com.minimarket.minimarket.controller;
 
 import com.minimarket.minimarket.entity.Inventario;
 import com.minimarket.minimarket.service.InventarioService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +33,13 @@ public class InventarioController {
     }
 
     @PostMapping
-    public Inventario registrarMovimiento(@RequestBody Inventario inventario) {
+    public Inventario registrarMovimiento(@Valid @RequestBody Inventario inventario) {
         sanitizarInventario(inventario);
         return inventarioService.save(inventario);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Inventario> actualizarMovimiento(@PathVariable Long id, @RequestBody Inventario inventario) {
+    public ResponseEntity<Inventario> actualizarMovimiento(@PathVariable Long id, @Valid @RequestBody Inventario inventario) {
         sanitizarInventario(inventario);
         Inventario existente = inventarioService.findById(id);
         if (existente != null) {

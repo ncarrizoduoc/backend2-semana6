@@ -1,6 +1,9 @@
 package com.minimarket.minimarket.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -12,15 +15,21 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Debe ingresar un nombre para el producto")
+    @NotBlank(message = "El nombre del producto no puede ser un texto en blanco")
     @Column(nullable = false)
     private String nombre;
 
+    @NotNull(message = "Debe ingresar el precio del producto")
+    @Positive(message = "El precio del producto debe ser un numero positivo")
     @Column(nullable = false)
     private Double precio;
 
+    @NotNull(message = "Debe ingresar el stock del producto")
     @Column(nullable = false)
     private Integer stock;
 
+    @NotNull(message = "Se debe asginar una categoria al Producto")
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;

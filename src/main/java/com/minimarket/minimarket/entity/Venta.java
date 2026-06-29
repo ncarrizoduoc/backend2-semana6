@@ -1,6 +1,7 @@
 package com.minimarket.minimarket.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -15,13 +16,16 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Debe ingresar un usuario")
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    @NotNull(message = "Debe ingresar una fecha")
     @Column(nullable = false)
     private Date fecha;
 
+    @NotNull(message = "Debe ingresar al menos un detalle de venta")
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<DetalleVenta> detalles;
 

@@ -1,5 +1,6 @@
 package com.minimarket.minimarket.security.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -83,7 +84,7 @@ public class AuthControllerTest {
     @Test
     public void loginConUsuarioInvalidoNoPermiteAcceso() throws Exception{
         // Arrange
-        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("username", "password")))
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenThrow(BadCredentialsException.class);
 
         // Act y Assert
@@ -91,6 +92,30 @@ public class AuthControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(request)))
             .andExpect(status().isUnauthorized()); // Se espera un status Unauthorized
+    }
+
+    // Prueba que valida que el endpoint [POST /auth/login] retorne un status Bad Request
+    // si se envia un LoginRequest con username null
+    @Test
+    public void loginSinUsernameRetornaBadRequest() throws Exception{
+        request.setUsername(null); // Se deja username como null (no permitido)
+        
+        mockMvc.perform(post("/auth/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(request)))
+            .andExpect(status().isBadRequest()); // Espera status Bad Request
+    }
+
+    // Prueba que valida que el endpoint [POST /auth/login] retorne un status Bad Request
+    // si se envia un LoginRequest con password null
+    @Test
+    public void loginSinPasswordRetornaBadRequest() throws Exception{
+        request.setPassword(null); // Se deja la contrasena como null (no permitido)
+        
+        mockMvc.perform(post("/auth/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(request)))
+            .andExpect(status().isBadRequest()); // Espera status Bad Request
     }
 
 }

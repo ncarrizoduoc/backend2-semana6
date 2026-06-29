@@ -34,7 +34,7 @@ public class ProductoController {
     }
 
     @PostMapping
-    public Producto guardarProducto(@RequestBody Producto producto) {
+    public Producto guardarProducto(@Valid @RequestBody Producto producto) {
         sanitizarProducto(producto);
         return productoService.save(producto);
     }

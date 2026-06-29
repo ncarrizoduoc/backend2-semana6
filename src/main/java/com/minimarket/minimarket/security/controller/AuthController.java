@@ -15,6 +15,8 @@ import com.minimarket.minimarket.security.model.JwtResponse;
 import com.minimarket.minimarket.security.model.LoginRequest;
 import com.minimarket.minimarket.security.util.JwtUtil;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -26,7 +28,7 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request){
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest request){
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );

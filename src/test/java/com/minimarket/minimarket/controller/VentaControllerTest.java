@@ -108,25 +108,6 @@ public class VentaControllerTest {
             .andExpect(jsonPath("$.detalles").value(detalles)); // Verificar que los detalles de venta sean los esperados
     }
 
-    // Prueba que valida que al llamar al endpoint [POST /api/ventas] con un usuario valido, pero
-    // un body invalido (no corresponde a una venta), retorne un codigo de status 400 (Bad Request) 
-    @Test
-    @WithMockUser(authorities = {"CAJERO"})
-    public void cajeroNoPuedeRegistrarVentaInvalidaTest() throws Exception{
-        // Arrange
-        String bodyInvalido = """
-            {
-                "id": 9,
-                "usuario": "User"
-            }
-            """;
-
-        mockMvc.perform(post("/api/ventas") // Se llama al endpoint [POST /api/ventas]
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(bodyInvalido)) // Se envia el body no valido
-            .andExpect(status().isBadRequest()); // Se espera un codigo 400 (Bad Request) como respuesta
-    }
-
     // Prueba que verifica que un usuario no autorizado (sin rol CAJERO) no pueda acceder
     // al endpoint [POST /api/ventas] para registrar una venta, pues el endpoint solo admite
     // usuarios con rol CAJERO
@@ -199,6 +180,21 @@ public class VentaControllerTest {
     public void usuarioNoAutorizadoNoPuedeBuscarVenta() throws Exception{
         mockMvc.perform(get("/api/ventas/{id}", Long.valueOf(1))) // Se llama al endpoint [GET /api/ventas/1]
             .andExpect(status().isForbidden()); // Se espera un codigo 403 (Forbidden)
+    }
+
+    // Prueba que valida que el endpoint [POST /api/ventas] retorne Bad Request si el usuario adjunta
+    // una Venta no valida (que no cumple con las restricciones de datos implementadas en la clase
+    // Venta) en el body de la solicitud. Espera como respuesta un status Bad Request
+    @Test
+    @WithMockUser(authorities = {"CAJERO"})
+    public void guardarVentaNoValidaLanzaErrorTest() throws Exception{
+        venta.setFecha(null); // Se asigna fecha null (que no esta permitido)
+
+        mockMvc.perform(post("/api/ventas")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(venta)))
+            .andExpect(status().isBadRequest()); // Se espera un status Bad Request
+
     }
 
 }
