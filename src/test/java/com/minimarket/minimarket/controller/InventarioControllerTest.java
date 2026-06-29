@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -112,7 +113,7 @@ public class InventarioControllerTest {
     // Prueba que valida que un usuario no autorizado (sin rol CAJERO) no pueda acceder al endpoint
     // [PUT /api/inventario/{id}] para editar un inventario
     @Test
-    @WithMockUser(authorities = {"NOAUTORIZADO"})
+    @WithAnonymousUser
     public void usuarioNoAutorizadoNoPuedeModificarInventarioTest() throws Exception{
         mockMvc.perform(put("/api/inventario/{id}", Long.valueOf(99)) // Se llama al endpoint [PUT /api/inventario/99]
             .contentType(MediaType.APPLICATION_JSON)
@@ -139,7 +140,7 @@ public class InventarioControllerTest {
     // Prueba que valida que un usuario no autorizado (sin rol CAJERO) no pueda
     // acceder al endpoint [GET /api/inventario]
     @Test
-    @WithMockUser(authorities = {"NOAUTORIZADO"})
+    @WithAnonymousUser
     public void usuarioNoAutorizadoNoPuedeVerInventariosTest() throws Exception{
         mockMvc.perform(get("/api/inventario")) // Llama el endpoint [GET /api/inventarios]
             .andExpect(status().isForbidden()); // Espera un status Forbidden
@@ -198,7 +199,7 @@ public class InventarioControllerTest {
     // Prueba que valida que un usuario no autorizado (sin rol CAJERO) no pueda acceder
     // al endpoint [POST /api/inventario]
     @Test
-    @WithMockUser(authorities = {"NOAUTORIZADO"})
+    @WithAnonymousUser
     public void usuarioNoAutorizadoNoPuedeGuardarInventarioTest() throws Exception{
         mockMvc.perform(post("/api/inventario") // Se llama al endpoint [POST /api/inventario]
             .contentType(MediaType.APPLICATION_JSON)
@@ -234,7 +235,7 @@ public class InventarioControllerTest {
 
     // Prueba que valida que un usuario no autorizado no pueda acceder al endpoint [DELETE /api/inventario/{id}]
     @Test
-    @WithMockUser(authorities = {"NOAUTORIZADO"})
+    @WithAnonymousUser
     public void usuarioNoAutorizadoNoPuedeEliminarInventarioTest() throws Exception{
         mockMvc.perform(delete("/api/inventario/{id}", Long.valueOf(1))) // Llama al endpoint [DELETE /api/inventario/1]
             .andExpect(status().isForbidden()); // Espera un status Forbidden

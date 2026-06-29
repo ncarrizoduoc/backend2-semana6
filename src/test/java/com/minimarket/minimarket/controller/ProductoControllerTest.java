@@ -107,7 +107,7 @@ public class ProductoControllerTest {
     // Prueba que valida que un usuario no autorizado (sin rol ADMIN) no pueda acceder al endpoint
     // [PUT /api/productos/{id}] para editar un producto
     @Test
-    @WithMockUser(authorities = {"CLIENTE"})
+    @WithAnonymousUser
     public void usuarioNoAutorizadoNoPuedeModificarProductoTest() throws Exception{
         mockMvc.perform(put("/api/productos/{id}", Long.valueOf(99)) // Se llama al endpoint [PUT /api/productos/99]
             .contentType(MediaType.APPLICATION_JSON)
@@ -184,7 +184,7 @@ public class ProductoControllerTest {
     // Prueba que valida que un usuario no autorizado (sin rol ADMIN) no pueda acceder
     // al endpoint [POST /api/productos]
     @Test
-    @WithMockUser(authorities = {"NOAUTORIZADO"})
+    @WithAnonymousUser
     public void usuarioNoAutorizadoNoPuedeGuardarProductoTest() throws Exception{
         mockMvc.perform(post("/api/productos") // Se llama al endpoint [POST /api/productos]
             .contentType(MediaType.APPLICATION_JSON)
